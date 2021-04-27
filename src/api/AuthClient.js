@@ -42,7 +42,7 @@ export default {
         return httpClient.post('/logout')
     },
     forgotPassword(email) {
-        return httpClient.post('/forgot_password', {
+        return httpClient.post('/forgot-password', {
             email
         })
     },

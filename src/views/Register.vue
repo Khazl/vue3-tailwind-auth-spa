@@ -84,8 +84,9 @@ export default {
       await AuthClient.setCsrf()
       AuthClient.register(this.username, this.email, this.password, this.password_confirmation).then(response => {
         if (response.status === 201) {
-          // TODO: Add redirect to secret area
-          console.log('Yeah!')
+          this.$store.dispatch('auth/checkAuth').then(() => {
+            this.$router.push({ path: '/dashboard' })
+          });
         } else {
           // TODO: Show error
           console.error(response)

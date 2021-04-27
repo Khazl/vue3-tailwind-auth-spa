@@ -21,12 +21,12 @@
           <div class="rounded-md shadow-sm -space-y-px">
             <div>
               <label for="email-address" class="sr-only">Email address</label>
-              <input id="email-address" name="email" type="email" autocomplete="email" required="" class="appearance-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-primary-500 focus:border-primary-500 focus:z-10 sm:text-sm" placeholder="Email address" />
+              <input v-model="email" id="email-address" name="email" type="email" autocomplete="email" required="" class="appearance-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-primary-500 focus:border-primary-500 focus:z-10 sm:text-sm" placeholder="Email address" />
             </div>
           </div>
 
           <div>
-            <x-button icon="MailOpenIcon" @click="modalSendOpen = true">
+            <x-button icon="MailOpenIcon" @click="forgotPassword">
               Send Reset
             </x-button>
           </div>
@@ -81,6 +81,7 @@ import { Dialog, DialogOverlay, DialogTitle, TransitionChild, TransitionRoot } f
 import { CheckIcon } from '@heroicons/vue/outline'
 import { MailOpenIcon } from '@heroicons/vue/solid'
 import XButton from '@/components/Button.vue'
+import AuthClient from "@/api/AuthClient";
 
 export default {
   components: {
@@ -95,10 +96,28 @@ export default {
   },
   setup() {
     const modalSendOpen = ref(false)
+    const email = ref(undefined)
 
     return {
       modalSendOpen,
+      email
     }
   },
+  methods: {
+    async forgotPassword(event) {
+      if (event) {
+        event.preventDefault()
+      }
+      await AuthClient.setCsrf()
+      AuthClient.forgotPassword(this.email).then(response => {
+        if (response.status === 200) {
+          this.modalSendOpen = true
+        } else {
+          // TODO: Show error
+          console.error(response)
+        }
+      })
+    }
+  }
 }
 </script>
