@@ -10,6 +10,7 @@ export default defineConfig({
     },
   },
   server: {
+    host: 'sd.local',
     open: true,
   },
 })

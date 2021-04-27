@@ -21,17 +21,17 @@
           <div class="rounded-md shadow-sm -space-y-px">
             <div>
               <label for="email-address" class="sr-only">Email address</label>
-              <input id="email-address" name="email" type="email" autocomplete="email" required="" class="appearance-none rounded-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-primary-500 focus:border-primary-500 focus:z-10 sm:text-sm" placeholder="Email address" />
+              <input v-model="email" id="email-address" name="email" type="email" autocomplete="email" required="" class="appearance-none rounded-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-primary-500 focus:border-primary-500 focus:z-10 sm:text-sm" placeholder="Email address" />
             </div>
             <div>
               <label for="password" class="sr-only">Password</label>
-              <input id="password" name="password" type="password" autocomplete="current-password" required="" class="appearance-none rounded-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-primary-500 focus:border-primary-500 focus:z-10 sm:text-sm" placeholder="Password" />
+              <input v-model="password" id="password" name="password" type="password" autocomplete="current-password" required="" class="appearance-none rounded-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-primary-500 focus:border-primary-500 focus:z-10 sm:text-sm" placeholder="Password" />
             </div>
           </div>
 
           <div class="flex items-center justify-between">
             <div class="flex items-center">
-              <input id="remember_me" name="remember_me" type="checkbox" class="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded" />
+              <input v-model="remember" id="remember_me" name="remember_me" type="checkbox" class="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded" />
               <label for="remember_me" class="ml-2 block text-sm text-gray-900">
                 Remember me
               </label>
@@ -46,7 +46,7 @@
           </div>
           <input type="hidden" name="remember" value="true" />
           <div>
-            <x-button icon="LockClosedIcon" @click="">
+            <x-button icon="LockClosedIcon" @click="login">
               Sign in
             </x-button>
           </div>
@@ -57,14 +57,38 @@
 </template>
 
 <script>
-import { defineComponent } from 'vue'
-import { LockClosedIcon } from '@heroicons/vue/solid'
+import { defineComponent, ref } from 'vue'
 import XButton from '@/components/Button.vue'
+import AuthClient from "@/api/AuthClient"
 
 export default {
   components: {
-    LockClosedIcon,
     XButton
   },
+  setup() {
+    const email = ref(undefined)
+    const password = ref(undefined)
+    const remember = ref(false)
+
+    return {
+      email,
+      password,
+      remember,
+    }
+  },
+  methods: {
+    login(event) {
+      if (event) {
+        event.preventDefault()
+      }
+      this.$store.dispatch('auth/login', {
+        email: this.email,
+        password: this.password,
+        remember: this.remember
+      }).then(() => {
+        this.$router.push({ path: '/dashboard' })
+      });
+    }
+  }
 }
 </script>

@@ -21,40 +21,30 @@
           <div class="rounded-md shadow-sm -space-y-px">
             <div>
               <label for="username" class="sr-only">Username</label>
-              <input id="username" name="username" type="email" autocomplete="email" required="" class="appearance-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-primary-500 focus:border-primary-500 focus:z-10 sm:text-sm" placeholder="Username" />
+              <input v-model="username" id="username" name="username" type="text" required="" class="appearance-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-primary-500 focus:border-primary-500 focus:z-10 sm:text-sm" placeholder="Username" />
             </div>
           </div>
 
           <div class="rounded-md shadow-sm -space-y-px">
             <div>
               <label for="email-address" class="sr-only">Email address</label>
-              <input id="email-address" name="email" type="email" autocomplete="email" required="" class="appearance-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-primary-500 focus:border-primary-500 focus:z-10 sm:text-sm" placeholder="Email address" />
+              <input v-model="email" id="email-address" name="email" type="email" autocomplete="email" required="" class="appearance-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-primary-500 focus:border-primary-500 focus:z-10 sm:text-sm" placeholder="Email address" />
             </div>
           </div>
 
-          <input type="hidden" name="sell_data" value="true" />
           <div class="rounded-md shadow-sm -space-y-px">
             <div>
               <label for="password" class="sr-only">Password</label>
-              <input id="password" name="password" type="password" autocomplete="current-password" required="" class="appearance-none rounded-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-primary-500 focus:border-primary-500 focus:z-10 sm:text-sm" placeholder="Password" />
+              <input v-model="password" id="password" name="password" type="password" autocomplete="current-password" required="" class="appearance-none rounded-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-primary-500 focus:border-primary-500 focus:z-10 sm:text-sm" placeholder="Password" />
             </div>
             <div>
               <label for="password_confirmation" class="sr-only">Password Confirmation</label>
-              <input id="password_confirmation" name="password_confirmation" type="password" autocomplete="current-password" required="" class="appearance-none rounded-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-primary-500 focus:border-primary-500 focus:z-10 sm:text-sm" placeholder="Password Confirmation" />
-            </div>
-          </div>
-
-          <div class="flex items-center justify-between">
-            <div class="flex items-center">
-              <input id="sell_data" name="sell_data" type="checkbox" class="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded" />
-              <label for="sell_data" class="ml-2 block text-sm text-gray-900">
-                Sell all my data!
-              </label>
+              <input v-model="password_confirmation" id="password_confirmation" name="password_confirmation" type="password" autocomplete="current-password" required="" class="appearance-none rounded-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-primary-500 focus:border-primary-500 focus:z-10 sm:text-sm" placeholder="Password Confirmation" />
             </div>
           </div>
 
           <div>
-            <x-button icon="LockClosedIcon" @click="">
+            <x-button icon="LockClosedIcon" @click="register">
               Create
             </x-button>
           </div>
@@ -65,14 +55,43 @@
 </template>
 
 <script>
-import { defineComponent } from 'vue'
-import { LockClosedIcon } from '@heroicons/vue/solid'
+import {defineComponent, ref} from 'vue'
 import XButton from '@/components/Button.vue'
+import AuthClient from "@/api/AuthClient"
 
 export default {
   components: {
-    LockClosedIcon,
     XButton
   },
+  setup() {
+    const username = ref(undefined)
+    const email = ref(undefined)
+    const password = ref(undefined)
+    const password_confirmation = ref(undefined)
+
+    return {
+      username,
+      email,
+      password,
+      password_confirmation,
+    }
+  },
+  methods: {
+    async register(event) {
+      if (event) {
+        event.preventDefault()
+      }
+      await AuthClient.setCsrf()
+      AuthClient.register(this.username, this.email, this.password, this.password_confirmation).then(response => {
+        if (response.status === 201) {
+          // TODO: Add redirect to secret area
+          console.log('Yeah!')
+        } else {
+          // TODO: Show error
+          console.error(response)
+        }
+      })
+    }
+  }
 }
 </script>
