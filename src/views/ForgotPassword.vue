@@ -3,7 +3,7 @@
     <div class="min-h-screen flex justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div class="max-w-md w-full space-y-8">
         <div>
-          <img class="mx-auto h-12 w-auto" src="https://tailwindui.com/img/logos/workflow-mark-indigo-600.svg" alt="Workflow" />
+          <x-logo></x-logo>
           <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
             Forgot my password
           </h2>
@@ -18,6 +18,7 @@
           </p>
         </div>
         <form class="mt-8 space-y-6 px-4 py-6 bg-white rounded-md shadow-xl" action="#" method="POST">
+          <x-notification color="error" :message="error"></x-notification>
           <div class="rounded-md shadow-sm -space-y-px">
             <div>
               <label for="email-address" class="sr-only">Email address</label>
@@ -81,6 +82,8 @@ import { Dialog, DialogOverlay, DialogTitle, TransitionChild, TransitionRoot } f
 import { CheckIcon } from '@heroicons/vue/outline'
 import { MailOpenIcon } from '@heroicons/vue/solid'
 import XButton from '@/components/Button.vue'
+import XNotification from '@/components/Notification.vue'
+import XLogo from '@/components/Logo.vue'
 import AuthClient from "@/api/AuthClient";
 
 export default {
@@ -92,15 +95,19 @@ export default {
     TransitionChild,
     TransitionRoot,
     CheckIcon,
-    XButton
+    XButton,
+    XNotification,
+    XLogo,
   },
   setup() {
     const modalSendOpen = ref(false)
     const email = ref(undefined)
+    const error = ref(undefined)
 
     return {
       modalSendOpen,
-      email
+      email,
+      error
     }
   },
   methods: {
@@ -108,16 +115,29 @@ export default {
       if (event) {
         event.preventDefault()
       }
+      this.error = undefined
+
+      if (!this.isDataGiven()) {
+        this.error = "Please fill the form ..."
+        return
+      }
+
       await AuthClient.setCsrf()
       AuthClient.forgotPassword(this.email).then(response => {
         if (response.status === 200) {
           this.modalSendOpen = true
+        }
+      }).catch(error => {
+        if (error.response) {
+          this.error = error.response.data.message
         } else {
-          // TODO: Show error
-          console.error(response)
+          this.error = "Something went wrong. Please try again ..."
         }
       })
-    }
+    },
+    isDataGiven() {
+      return this.email
+    },
   }
 }
 </script>

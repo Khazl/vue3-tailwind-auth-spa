@@ -3,7 +3,7 @@
     <div class="min-h-screen flex justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div class="max-w-md w-full space-y-8">
         <div>
-          <img class="mx-auto h-12 w-auto" src="https://tailwindui.com/img/logos/workflow-mark-indigo-600.svg" alt="Workflow" />
+          <x-logo></x-logo>
           <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
             Reset Password
           </h2>
@@ -43,12 +43,14 @@
 <script>
 import { defineComponent } from 'vue'
 import XButton from '@/components/Button.vue'
+import XLogo from '@/components/Logo.vue'
 import { LockClosedIcon } from '@heroicons/vue/solid'
 
 export default {
   components: {
     LockClosedIcon,
-    XButton
+    XButton,
+    XLogo,
   },
 }
 </script>

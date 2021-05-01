@@ -17,11 +17,11 @@ const actions = {
         if (userString) {
             return dispatch('checkAuth')
         }
-        return AuthClient.login(email, password, remember).then(response => {
+        return AuthClient.login(email, password, remember).then(() => {
             return dispatch('checkAuth')
-        }).catch(e => {
-            console.error(e)
+        }).catch(error => {
             commit('setUser', undefined)
+            return Promise.reject(error)
         })
     },
     async logout ({ commit }) {
